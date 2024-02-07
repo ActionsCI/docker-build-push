@@ -1,3 +1,6 @@
+on:
+  push:
+
 inputs:
   dockerfile:
     description: 'Path to the Dockerfile'
