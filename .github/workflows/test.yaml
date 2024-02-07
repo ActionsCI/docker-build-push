@@ -21,4 +21,4 @@ jobs:
           BUILD_ARGS: ''
           REGISTRY_URL: https://index.docker.io/v1/
           REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
