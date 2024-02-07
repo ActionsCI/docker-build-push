@@ -1,0 +1,35 @@
+name: Docker Build and Push
+description: Build and push a Docker image to a registry
+inputs:
+  dockerfile:
+    description: 'Path to the Dockerfile'
+    required: true
+  version:
+    description: 'Version of the Docker image'
+    required: true
+  image_name:
+    description: 'Name of the Docker image'
+    required: true
+  directory:
+    description: 'Path to the directory containing the Dockerfile'
+    required: true
+  build_args:
+    description: 'Build arguments for the Docker image, space-separated'
+    required: false
+    default: ''
+  registry_url:
+    description: 'URL of the Docker registry'
+    required: true
+  registry_username:
+    description: 'Username for the Docker registry'
+    required: true
+  registry_password:
+    description: 'Password or token for the Docker registry'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: |
+        ./scripts/build-and-push.sh "${{ inputs.image_name }}" "${{ inputs.version }}" "${{ inputs.directory }}" "${{ inputs.dockerfile }}" "${{ inputs.build_args }}" "${{ inputs.registry_url }}" "${{ inputs.registry_username }}" "${{ inputs.registry_password }}"
