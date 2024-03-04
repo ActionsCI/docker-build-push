@@ -1,0 +1,31 @@
+name: Test Docker Build and Push
+
+on: push
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 
+      # Simulate running the Docker build and push script
+      - name: Run build-and-push script
+        run: |
+          . ./scripts/build-and-push.sh \
+            "${{ env.IMAGE_NAME }}" \
+            "${{ env.VERSION }}" \
+            "${{ env.DIRECTORY }}" \
+            "${{ env.DOCKERFILE }}" \
+            "${{ env.BUILD_ARGS }}" \
+            "${{ env.REGISTRY_URL }}" \
+            "${{ env.REGISTRY_USERNAME }}" \
+            "${{ env.REGISTRY_PASSWORD }}"
+        env:
+          IMAGE_NAME: burninmedia/actionsci
+          VERSION: 0.1.0-test
+          DIRECTORY: .
+          DOCKERFILE: ./Dockerfile
+          BUILD_ARGS: ''
+          REGISTRY_URL: docker.io
+          REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
