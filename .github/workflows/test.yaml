@@ -26,6 +26,6 @@ jobs:
           DIRECTORY: .
           DOCKERFILE: ./Dockerfile
           BUILD_ARGS: ''
-          REGISTRY_URL: burninmedia/actionsci
+          REGISTRY_URL: docker.io
           REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
