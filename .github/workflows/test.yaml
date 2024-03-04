@@ -21,7 +21,7 @@ jobs:
             "${{ env.REGISTRY_USERNAME }}" \
             "${{ env.REGISTRY_PASSWORD }}"
         env:
-          IMAGE_NAME: my-test-image
+          IMAGE_NAME: burninmedia/actionsci
           VERSION: 0.1.0-test
           DIRECTORY: .
           DOCKERFILE: ./Dockerfile
