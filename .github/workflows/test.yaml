@@ -12,7 +12,7 @@ jobs:
       # Simulate running the Docker build and push script
       - name: Run build-and-push script
         run: |
-          ./scripts/build-and-push.sh "${{ env.IMAGE_NAME }}" "${{ env.VERSION }}" "${{ env.DIRECTORY }}" "${{ env.DOCKERFILE }}" "${{ env.BUILD_ARGS }}" "${{ env.REGISTRY_URL }}" "${{ env.REGISTRY_USERNAME }}" "${{ env.REGISTRY_PASSWORD }}"
+          . ./scripts/build-and-push.sh "${{ env.IMAGE_NAME }}" "${{ env.VERSION }}" "${{ env.DIRECTORY }}" "${{ env.DOCKERFILE }}" "${{ env.BUILD_ARGS }}" "${{ env.REGISTRY_URL }}" "${{ env.REGISTRY_USERNAME }}" "${{ env.REGISTRY_PASSWORD }}"
         env:
           IMAGE_NAME: my-test-image
           VERSION: 0.1.0-test
