@@ -9,7 +9,7 @@ env:
   DOCKERFILE: ./Dockerfile
   BUILD_ARGS: ''
   REGISTRY_URL: docker.io
-  REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  REGISTRY_USERNAME: burninmedia
   REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
 jobs:
