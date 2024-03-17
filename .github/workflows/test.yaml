@@ -33,25 +33,28 @@ jobs:
             "${{ env.REGISTRY_PASSWORD }}"
         
       # Step that will delete the test image from repo using bash commands if previous step is successful
-      - name: Authenticate with Docker Hub
-        id: docker_login
+      - name: Authenticate with Docker Hub and Obtain JWT
+        id: docker_auth
         run: |
-          TOKEN_RESPONSE=$(curl -s -w "%{http_code}" -o response.json -H "Content-Type: application/json" -X POST -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKERHUB_TOKEN }}"}' https://hub.docker.com/v2/users/login/)
-          if [[ ${TOKEN_RESPONSE: -3} != "200" ]]; then
-            echo "Failed to authenticate. Response code: ${TOKEN_RESPONSE: -3}"
+          HUB_TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d "{\"username\": \"${{ secrets.DOCKER_USERNAME }}\", \"password\": \"${{ secrets.DOCKERHUB_TOKEN }}\"}" https://hub.docker.com/v2/users/login/ | jq -r .token)
+          if [[ -z "$HUB_TOKEN" || "$HUB_TOKEN" == "null" ]]; then
+            echo "Authentication failed."
+            exit 1
+          fi
+          echo "HUB_TOKEN=${HUB_TOKEN}" >> $GITHUB_ENV
+
+      - name: Delete Docker Image Tag from Docker Hub
+        run: |
+          RESPONSE_CODE=$(curl -s -o response.json -w "%{http_code}" -X DELETE \
+            -H "Accept: application/json" \
+            -H "Authorization: JWT ${HUB_TOKEN}" \
+            https://hub.docker.com/v2/repositories/${{ env.REGISTRY_USERNAME }}/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}/)
+
+          if [[ "${RESPONSE_CODE}" -eq 204 ]]; then
+            echo "Image tag deleted successfully."
+          else
+            echo "Failed to delete the image tag. Response code: ${RESPONSE_CODE}"
             cat response.json
             exit 1
           fi
-          TOKEN=$(jq -r .token response.json)
-          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
 
-      - name: Verify Tag Exists and Delete test image from Docker Hub
-        run: |
-          DELETE_RESPONSE=$(curl -s -w "%{http_code}" -o delete_response.json -X DELETE -H "Authorization: JWT ${TOKEN}" "https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}/")
-          if [[ ${DELETE_RESPONSE: -3} == "204" ]]; then
-            echo "Image deleted successfully."
-          else
-            echo "Failed to delete the image. Response code: ${DELETE_RESPONSE: -3}"
-            cat delete_response.json
-            exit 1
-          fi
