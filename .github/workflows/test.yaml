@@ -33,7 +33,7 @@ jobs:
       #Step that will delete the test image from repo using bash commands if previous step is successful
       - name: Delete test image from Docker Hub
         run: |
-          TOKEN_RESPONSE=$(curl -s -w "%{http_code}" -o response.json -H "Content-Type: application/json" -X POST -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_TOKEN }}"}' https://hub.docker.com/v2/users/login/)
+          TOKEN_RESPONSE=$(curl -s -w "%{http_code}" -o response.json -H "Content-Type: application/json" -X POST -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKERHUB_TOKEN }}"}' https://hub.docker.com/v2/users/login/)
           if [[ ${TOKEN_RESPONSE: -3} == "200" ]]; then
             TOKEN=$(jq -r .token response.json)
             DELETE_RESPONSE=$(curl -s -w "%{http_code}" -o delete_response.json -X DELETE -H "Authorization: JWT ${TOKEN}" "https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}/")
