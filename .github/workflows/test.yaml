@@ -33,6 +33,22 @@ jobs:
       #Step that will delete the test image from repo using bash commands if previous step is successful
       - name: Delete test image from Docker Hub
         run: |
-          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${{ secrets.DOCKER_HUB_USERNAME }}'", "password": "'${{ secrets.DOCKER_HUB_PASSWORD }}'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
-          curl -X DELETE -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}
+          TOKEN_RESPONSE=$(curl -s -w "%{http_code}" -o response.json -H "Content-Type: application/json" -X POST -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_TOKEN }}"}' https://hub.docker.com/v2/users/login/)
+          if [[ ${TOKEN_RESPONSE: -3} == "200" ]]; then
+            TOKEN=$(jq -r .token response.json)
+            DELETE_RESPONSE=$(curl -s -w "%{http_code}" -o delete_response.json -X DELETE -H "Authorization: JWT ${TOKEN}" "https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}/")
+            if [[ ${DELETE_RESPONSE: -3} == "200" ]]; then
+              echo "Image deleted successfully."
+            else
+              echo "Failed to delete the image. Response code: ${DELETE_RESPONSE: -3}"
+              cat delete_response.json
+              exit 1
+            fi
+          else
+            echo "Failed to authenticate. Response code: ${TOKEN_RESPONSE: -3}"
+            cat response.json
+            exit 1
+          fi
+
+
   
