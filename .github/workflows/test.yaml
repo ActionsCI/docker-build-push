@@ -3,7 +3,7 @@ name: Test Docker Build and Push
 on: push
 
 env:
-  IMAGE_NAME: burninmedia/actionsci
+  REPO_NAME: actionsci
   VERSION: 0.1.0-test
   DIRECTORY: .
   DOCKERFILE: ./Dockerfile
@@ -23,7 +23,7 @@ jobs:
       - name: Run build-and-push script
         run: |
           . ./scripts/build-and-push.sh \
-            "${{ env.IMAGE_NAME }}" \
+            "${{ env.REGISTRY_USERNAME }}/${{ env.REPO_NAME }}" \
             "${{ env.VERSION }}" \
             "${{ env.DIRECTORY }}" \
             "${{ env.DOCKERFILE }}" \
@@ -48,7 +48,7 @@ jobs:
           RESPONSE_CODE=$(curl -s -o response.json -w "%{http_code}" -X DELETE \
             -H "Accept: application/json" \
             -H "Authorization: JWT ${HUB_TOKEN}" \
-            https://hub.docker.com/v2/repositories/${{ env.REGISTRY_USERNAME }}/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}/)
+            https://hub.docker.com/v2/repositories/${{ env.REGISTRY_USERNAME }}/${{ env.REPO_NAME }}/tags/${{ env.VERSION }}/)
 
           if [[ "${RESPONSE_CODE}" -eq 204 ]]; then
             echo "Image tag deleted successfully."
