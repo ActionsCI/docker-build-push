@@ -60,4 +60,3 @@ jobs:
             cat response.json
             exit 1
           fi
-
