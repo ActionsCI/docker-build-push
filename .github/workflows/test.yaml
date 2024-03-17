@@ -1,13 +1,30 @@
 name: Test Docker Build and Push
 
 on: push
-
+env:
+  IMAGE_NAME: burninmedia/actionsci
+  VERSION: 0.1.0-test
+  DIRECTORY: .
+  DOCKERFILE: ./Dockerfile
+  BUILD_ARGS: ''
+  REGISTRY_URL: docker.io
+  REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4 
+      # read thhe action.yaml file and then executing the value found in the action.yaml runs.steps.*. use yq to get value from yaml file
+      - name: Get the action.yml file
+        run: |
+          echo "The action.yml file is:"
+          cat action.yml
+          echo "The value of the runs.steps.*.run is:"
+          yq r action.yml 'runs.steps.*.run'
+
+      
       # Simulate running the Docker build and push script
       - name: Run build-and-push script
         run: |
@@ -20,12 +37,10 @@ jobs:
             "${{ env.REGISTRY_URL }}" \
             "${{ env.REGISTRY_USERNAME }}" \
             "${{ env.REGISTRY_PASSWORD }}"
-        env:
-          IMAGE_NAME: burninmedia/actionsci
-          VERSION: 0.1.0-test
-          DIRECTORY: .
-          DOCKERFILE: ./Dockerfile
-          BUILD_ARGS: ''
-          REGISTRY_URL: docker.io
-          REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+      #Step that will delete the test image from repo using bash commands if previous step is successful
+      - name: Delete test image from Docker Hub
+        run: |
+          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${{ secrets.DOCKER_HUB_USERNAME }}'", "password": "'${{ secrets.DOCKER_HUB_PASSWORD }}'"}' https://hub.docker.com/v2/users/login/ | jq -r .token)
+          curl -X DELETE -H "Authorization: JWT ${TOKEN}" https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${{ env.VERSION }}
+  
