@@ -1,7 +1,10 @@
 name: Test Docker Build and Push
 
-on: push
-
+#On pr only
+on:
+  pull_request:
+    branches:
+      - main
 env:
   REPO_NAME: actionsci
   VERSION: 0.1.0-test
