@@ -15,24 +15,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 
-      # read thhe action.yaml file and then executing the value found in the action.yaml runs.steps.*. use yq to get value from yaml file
-      - name: Extract run command from action.yml
-        id: extract_run
+        uses: actions/checkout@v4
+      
+      # Simulate running the Docker build and push script
+      - name: Run build-and-push script
         run: |
-          run_command=$(yq eval '.runs.steps[].run' action.yml)
-          echo "run_command<<EOF" >> $GITHUB_ENV
-          echo "$run_command" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-      - name: Simulate running the extracted run command
-        run: |
-          # Load the run command from the environment variable
-          run_command="${{ env.run_command }}"
-          
-          # Assuming your environment variables are correctly set up
-          # Simulate the execution of the run command
-          echo "Simulating the execution of the run command:"
-          echo "$run_command"
+          . ./scripts/build-and-push.sh \
+            "${{ env.IMAGE_NAME }}" \
+            "${{ env.VERSION }}" \
+            "${{ env.DIRECTORY }}" \
+            "${{ env.DOCKERFILE }}" \
+            "${{ env.BUILD_ARGS }}" \
+            "${{ env.REGISTRY_URL }}" \
+            "${{ env.REGISTRY_USERNAME }}" \
+            "${{ env.REGISTRY_PASSWORD }}"
+        
       #Step that will delete the test image from repo using bash commands if previous step is successful
       - name: Delete test image from Docker Hub
         run: |
