@@ -32,4 +32,5 @@ runs:
   steps:
     - shell: bash
       run: |
+        chmod +x ${GITHUB_ACTION_PATH}/scripts/build-and-push.sh
         ${GITHUB_ACTION_PATH}/scripts/build-and-push.sh "${{ inputs.image_name }}" "${{ inputs.version }}" "${{ inputs.directory }}" "${{ inputs.dockerfile }}" "${{ inputs.build_args }}" "${{ inputs.registry_url }}" "${{ inputs.registry_username }}" "${{ inputs.registry_password }}"
