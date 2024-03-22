@@ -30,7 +30,6 @@ elif [ ! -z "$REGISTRY_USERNAME" ] && [ ! -z "$REGISTRY_PASSWORD" ]; then
   echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
 else
   echo "No authentication method provided"
-  exit 1
 fi
 
 # Docker build and push
