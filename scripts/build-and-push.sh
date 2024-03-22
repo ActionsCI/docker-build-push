@@ -20,16 +20,17 @@ DOCKERHUB_TOKEN=${9}  # optional Docker Hub token
 [ -z "$VERSION" ] && echo "VERSION is empty" && exit 1
 [ -z "$DIRECTORY" ] && echo "DIRECTORY is empty" && exit 1
 [ -z "$REGISTRY_URL" ] && echo "REGISTRY_URL is empty" && exit 1
-#check if DOCKERHUB_TOKEN or (REGISTRY_USERNAME & REGISTRY_PASSWORD) are set. 
-[ -z "$DOCKERHUB_TOKEN" ] && [ -z "$REGISTRY_USERNAME" ] && [ -z "$REGISTRY_PASSWORD" ] && echo "DOCKERHUB_TOKEN & REGISTRY_USERNAME & REGISTRY_PASSWORD is empty" && exit 1
 
 # Decide whether to use DOCKERHUB_TOKEN or REGISTRY_PASSWORD for login
 if [ ! -z "$DOCKERHUB_TOKEN" ]; then
   echo "Using Docker Hub token for authentication"
   echo "$DOCKERHUB_TOKEN" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
-else
+elif [ ! -z "$REGISTRY_USERNAME" ] && [ ! -z "$REGISTRY_PASSWORD" ]; then
   echo "Using registry password for authentication"
   echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
+else
+  echo "No authentication method provided"
+  exit 1
 fi
 
 # Docker build and push
