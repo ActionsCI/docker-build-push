@@ -23,8 +23,8 @@ inputs:
   registry_username:
     description: 'Username for the Docker registry'
     required: true
-  registry_password:
-    description: 'Password or token for the Docker registry'
+  registry_token:
+    description: 'Token for the Docker registry'
     required: true
 
 runs:
@@ -33,4 +33,4 @@ runs:
     - shell: bash
       run: |
         chmod +x ${GITHUB_ACTION_PATH}/scripts/build-and-push.sh
-        ${GITHUB_ACTION_PATH}/scripts/build-and-push.sh "${{ inputs.image_name }}" "${{ inputs.version }}" "${{ inputs.directory }}" "${{ inputs.dockerfile }}" "${{ inputs.build_args }}" "${{ inputs.registry_url }}" "${{ inputs.registry_username }}" "${{ inputs.registry_password }}"
+        ${GITHUB_ACTION_PATH}/scripts/build-and-push.sh "${{ inputs.image_name }}" "${{ inputs.version }}" "${{ inputs.directory }}" "${{ inputs.dockerfile }}" "${{ inputs.build_args }}" "${{ inputs.registry_url }}" "${{ inputs.registry_username }}" "${{ inputs.registry_token }}"
