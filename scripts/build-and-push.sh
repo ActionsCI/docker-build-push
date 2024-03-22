@@ -9,12 +9,19 @@ fi
 IMAGE_NAME=$1
 VERSION=$2
 DIRECTORY=$3
-DOCKERFILE=${4:-Dockerfile}
-BUILD_ARGS=${5:-}
-REGISTRY_URL=${6:-docker.io}
-REGISTRY_USERNAME=$7
-REGISTRY_PASSWORD=$8
-DOCKERHUB_TOKEN=${9:-}  # New optional Docker Hub token
+DOCKERFILE=${4}
+BUILD_ARGS=${5}
+REGISTRY_URL=${6}
+REGISTRY_USERNAME=$7 # optional registry username
+REGISTRY_PASSWORD=$8  # optional registry password
+DOCKERHUB_TOKEN=${9}  # optional Docker Hub token
+#check all vars are not empty with 1 liners
+[ -z "$IMAGE_NAME" ] && echo "IMAGE_NAME is empty" && exit 1
+[ -z "$VERSION" ] && echo "VERSION is empty" && exit 1
+[ -z "$DIRECTORY" ] && echo "DIRECTORY is empty" && exit 1
+[ -z "$REGISTRY_URL" ] && echo "REGISTRY_URL is empty" && exit 1
+#check if DOCKERHUB_TOKEN or (REGISTRY_USERNAME & REGISTRY_PASSWORD) are set. 
+[ -z "$DOCKERHUB_TOKEN" ] && [ -z "$REGISTRY_USERNAME" ] && [ -z "$REGISTRY_PASSWORD" ] && echo "DOCKERHUB_TOKEN & REGISTRY_USERNAME & REGISTRY_PASSWORD is empty" && exit 1
 
 # Decide whether to use DOCKERHUB_TOKEN or REGISTRY_PASSWORD for login
 if [ ! -z "$DOCKERHUB_TOKEN" ]; then
