@@ -3,7 +3,8 @@ description: Build and push a Docker image to a registry
 inputs:
   dockerfile:
     description: 'Path to the Dockerfile'
-    required: true
+    required: false
+    default: 'Dockerfile'
   version:
     description: 'Version of the Docker image'
     required: true
@@ -20,13 +21,13 @@ inputs:
     default: ''
   registry_url:
     description: 'URL of the Docker registry'
-    required: true
+    required: false
   registry_username:
     description: 'Username for the Docker registry'
-    required: true
+    required: false
   registry_token:
     description: 'Token for the Docker registry'
-    required: true
+    required: false
 
 runs:
   using: 'composite'
